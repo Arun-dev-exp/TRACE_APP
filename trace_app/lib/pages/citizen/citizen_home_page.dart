@@ -99,6 +99,8 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                             text: 'A project in your district is flagged 🔴'),
                       _HeroReportCta(),
                       const SizedBox(height: 8),
+                      _SmartGovernanceCta(),
+                      const SizedBox(height: 12),
 
                       // ── Active projects ──────────────────────────────────
                       SectionCard(
@@ -172,6 +174,43 @@ class _HeroReportCta extends StatelessWidget {
             child: const Icon(Icons.camera_alt_outlined, color: Colors.white, size: 28),
           ),
         ]),
+      ),
+    );
+  }
+}
+
+class _SmartGovernanceCta extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final t = FlutterFlowTheme.of(context);
+    return GestureDetector(
+      onTap: () => context.push('/simulation'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: t.secondary),
+          boxShadow: [
+            BoxShadow(color: t.secondary.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.auto_awesome, color: t.secondary, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('See TRACE AI in Action', style: t.titleMedium.copyWith(color: t.secondary)),
+                  Text('Watch how tenders are securely awarded', style: t.bodySmall),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: t.secondary),
+          ],
+        ),
       ),
     );
   }

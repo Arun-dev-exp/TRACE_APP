@@ -12,6 +12,7 @@ import 'pages/citizen/report_issue_page.dart';
 import 'pages/citizen/scheme_status_page.dart';
 import 'pages/citizen/my_reports_page.dart';
 import 'pages/shared/blockchain_ledger_page.dart';
+import 'pages/shared/tender_simulation_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,8 +30,9 @@ final _router = GoRouter(
     GoRoute(path: '/citizen/report', builder: (_, s) => ReportIssuePage(schemeName: s.uri.queryParameters['scheme'])),
     GoRoute(path: '/citizen/schemes', builder: (_, __) => const SchemeStatusPage()),
     GoRoute(path: '/citizen/my-reports', builder: (_, __) => const MyReportsPage()),
-    // Blockchain — accessible from all roles
+    // Shared
     GoRoute(path: '/blockchain', builder: (_, __) => const BlockchainLedgerPage()),
+    GoRoute(path: '/simulation', builder: (_, __) => const TenderSimulationPage()),
   ],
 );
 
