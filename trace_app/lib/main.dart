@@ -6,51 +6,34 @@ import 'package:provider/provider.dart';
 import 'app_state.dart';
 import 'flutter_flow/flutter_flow_theme.dart';
 import 'pages/onboarding/splash_page.dart';
-import 'pages/onboarding/role_select_page.dart';
-import 'pages/onboarding/otp_page.dart';
-import 'pages/onboarding/profile_setup_page.dart';
+import 'pages/onboarding/district_select_page.dart';
 import 'pages/citizen/citizen_home_page.dart';
 import 'pages/citizen/report_issue_page.dart';
 import 'pages/citizen/scheme_status_page.dart';
 import 'pages/citizen/my_reports_page.dart';
-import 'pages/auditor/auditor_home_page.dart';
-import 'pages/auditor/qr_scan_page.dart';
-import 'pages/auditor/inspection_form_page.dart';
-import 'pages/auditor/inspection_detail_page.dart';
-import 'pages/contractor/contractor_home_page.dart';
-import 'pages/contractor/submit_invoice_page.dart';
-import 'pages/contractor/submit_milestone_page.dart';
-import 'pages/contractor/payment_tracker_page.dart';
 import 'pages/shared/blockchain_ledger_page.dart';
 
-void main() => runApp(const TraceApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppState().init();
+  runApp(const TraceApp());
+}
 
 final _router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (_, __) => const SplashPage()),
-    GoRoute(path: '/role', builder: (_, __) => const RoleSelectPage()),
-    GoRoute(path: '/otp', builder: (_, s) => OtpPage(phone: s.uri.queryParameters['phone'] ?? '')),
-    GoRoute(path: '/profile', builder: (_, __) => const ProfileSetupPage()),
+    GoRoute(path: '/district-select', builder: (_, __) => const DistrictSelectPage()),
     // Citizen
     GoRoute(path: '/citizen', builder: (_, __) => const CitizenHomePage()),
-    GoRoute(path: '/citizen/report', builder: (_, __) => const ReportIssuePage()),
+    GoRoute(path: '/citizen/report', builder: (_, s) => ReportIssuePage(schemeName: s.uri.queryParameters['scheme'])),
     GoRoute(path: '/citizen/schemes', builder: (_, __) => const SchemeStatusPage()),
     GoRoute(path: '/citizen/my-reports', builder: (_, __) => const MyReportsPage()),
-    // Auditor
-    GoRoute(path: '/auditor', builder: (_, __) => const AuditorHomePage()),
-    GoRoute(path: '/auditor/scan', builder: (_, __) => const QrScanPage()),
-    GoRoute(path: '/auditor/inspect', builder: (_, s) => InspectionFormPage(projectId: s.uri.queryParameters['pid'] ?? 'JHS-RD-017')),
-    GoRoute(path: '/auditor/detail', builder: (_, s) => InspectionDetailPage(id: s.uri.queryParameters['id'] ?? '')),
-    // Contractor
-    GoRoute(path: '/contractor', builder: (_, __) => const ContractorHomePage()),
-    GoRoute(path: '/contractor/invoice', builder: (_, __) => const SubmitInvoicePage()),
-    GoRoute(path: '/contractor/milestone', builder: (_, __) => const SubmitMilestonePage()),
-    GoRoute(path: '/contractor/payments', builder: (_, s) => PaymentTrackerPage(contractId: s.uri.queryParameters['cid'] ?? '')),
     // Blockchain — accessible from all roles
     GoRoute(path: '/blockchain', builder: (_, __) => const BlockchainLedgerPage()),
   ],
 );
+
 
 class TraceApp extends StatelessWidget {
   const TraceApp({super.key});

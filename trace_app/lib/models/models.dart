@@ -168,6 +168,7 @@ class Report {
       );
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'type': type,
         'category': category,
         'description': description,
@@ -177,7 +178,23 @@ class Report {
         'district_id': districtId,
         if (projectId != null) 'project_id': projectId,
         'submitted_by': type,
+        'status': status,
+        'created_at': createdAt.toIso8601String(),
       };
+
+  factory Report.fromJson(Map<String, dynamic> j) => Report(
+        id: j['id'] as String?,
+        type: j['type'] as String? ?? 'citizen',
+        category: j['category'] as String? ?? 'other',
+        description: j['description'] as String? ?? '',
+        photoUrl: j['photo_url'] as String? ?? '',
+        lat: (j['gps_lat'] as num?)?.toDouble() ?? 0.0,
+        lng: (j['gps_lng'] as num?)?.toDouble() ?? 0.0,
+        districtId: j['district_id'] as String? ?? '',
+        projectId: j['project_id'] as String?,
+        status: j['status'] as String? ?? 'Received',
+        createdAt: j['created_at'] != null ? DateTime.parse(j['created_at'] as String) : null,
+      );
 }
 
 // Helper: DateTime.now() can't be used as a default const value

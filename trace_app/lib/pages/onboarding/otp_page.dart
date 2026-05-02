@@ -38,6 +38,7 @@ class _OtpPageState extends State<OtpPage> {
   Future<void> _verify() async {
     if (_otpCtl.text.length != 6) {
       _snack('OTP must be 6 digits');
+      setState(() => _loading = false);
       return;
     }
     setState(() => _loading = true);
@@ -133,7 +134,7 @@ class _OtpPageState extends State<OtpPage> {
               ),
               if (_sent)
                 TextButton(
-                  onPressed: () => setState(() { _sent = false; _otpCtl.clear(); }),
+                  onPressed: () => setState(() { _sent = false; _loading = false; _otpCtl.clear(); }),
                   child: const Text('Change number'),
                 ),
               if (_sent) ...[

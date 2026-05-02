@@ -10,7 +10,8 @@ import '../../services/api_service.dart';
 import '../../widgets/common.dart';
 
 class ReportIssuePage extends StatefulWidget {
-  const ReportIssuePage({super.key});
+  final String? schemeName;
+  const ReportIssuePage({super.key, this.schemeName});
   @override
   State<ReportIssuePage> createState() => _ReportIssuePageState();
 }
@@ -35,6 +36,9 @@ class _ReportIssuePageState extends State<ReportIssuePage> {
   @override
   void initState() {
     super.initState();
+    if (widget.schemeName != null) {
+      _desc.text = '[Scheme: ${widget.schemeName}] ';
+    }
     _getLocation();
   }
 

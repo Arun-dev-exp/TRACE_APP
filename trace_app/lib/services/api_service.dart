@@ -98,7 +98,10 @@ class ApiService {
 
   /// GET /api/schemes/:districtId
   Future<ApiResult<List<Scheme>>> getSchemes(String districtId) =>
-      _get('/api/schemes/$districtId', (j) => (j as List).map((s) => Scheme.fromJson(s)).toList());
+      _get('/api/schemes/$districtId', (d) => (d as List).map((e) => Scheme.fromJson(e)).toList());
+
+  Future<ApiResult<List<Project>>> getProjects(String districtId) =>
+      _get('/api/projects/$districtId', (d) => (d as List).map((e) => Project.fromJson(e)).toList());
 
   /// GET /api/alerts
   Future<ApiResult<List<AlertItem>>> getAlerts() =>

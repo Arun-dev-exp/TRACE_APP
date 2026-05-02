@@ -47,24 +47,12 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
       state.districtId = match.id;
     }
 
-    // Nearby projects = first 3 projects from flagged/watch districts
-    // (We don't have a projects-per-district endpoint; we reuse contracts endpoint later)
-    // For home screen we show district-level stats and use districts as project proxies
-    _projects = _allDistricts
-        .where((d) => d.riskScore > 35)
-        .take(3)
-        .map((d) => Project(
-              id: d.id,
-              name: '${d.name} Infrastructure Works',
-              contractor: 'State PWD',
-              milestone: 'Milestone 1',
-              lat: d.lat,
-              lng: d.lng,
-              districtId: d.id,
-              districtName: d.name,
-              flagged: d.status == 'flagged',
-            ))
-        .toList();
+    // Fetch actual projects for this district
+    final pResult = await ApiService.I.getProjects(match.id);
+    if (!mounted) return;
+    if (pResult.ok) {
+      _projects = pResult.data!.take(3).toList();
+    }
 
     // Fetch schemes for this district
     final sResult = await ApiService.I.getSchemes(match.id);
@@ -83,8 +71,7 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Namaste, ${state.name.isEmpty ? "Citizen" : state.name.split(" ").first}',
-              style: t.bodySmall),
+          const Text('Namaste, Citizen', style: TextStyle(fontSize: 14)),
           Text(state.district, style: t.headlineSmall),
         ]),
         actions: [
@@ -228,27 +215,33 @@ class _SchemeRow extends StatelessWidget {
     final t = FlutterFlowTheme.of(context);
     final color = schemeColor(scheme.schemeStatus, context);
     final pct = (scheme.returned / scheme.allocated).clamp(0.0, 1.0);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Expanded(child: Text(scheme.name, style: t.titleMedium)),
-          StatusPill(
-              label: '₹${scheme.returned.toStringAsFixed(1)} Cr returned',
-              color: color),
+    return InkWell(
+      onTap: () => context.push('/citizen/report?scheme=${Uri.encodeComponent(scheme.name)}'),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: Text(scheme.name, style: t.titleMedium)),
+            StatusPill(
+                label: '₹${scheme.returned.toStringAsFixed(1)} Cr returned',
+                color: color),
+            const SizedBox(width: 8),
+            Icon(Icons.report_problem_outlined, size: 18, color: t.secondaryText),
+          ]),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+                value: pct,
+                minHeight: 8,
+                backgroundColor: t.divider,
+                valueColor: AlwaysStoppedAnimation(color)),
+          ),
+          const SizedBox(height: 4),
+          Text('Allocated ₹${scheme.allocated.toStringAsFixed(1)} Cr', style: t.bodySmall),
         ]),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-              value: pct,
-              minHeight: 8,
-              backgroundColor: t.divider,
-              valueColor: AlwaysStoppedAnimation(color)),
-        ),
-        const SizedBox(height: 4),
-        Text('Allocated ₹${scheme.allocated.toStringAsFixed(1)} Cr', style: t.bodySmall),
-      ]),
+      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../flutter_flow/flutter_flow_theme.dart';
+import '../../app_state.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -14,7 +15,13 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Timer(const Duration(milliseconds: 1400), () {
-      if (mounted) context.go('/role');
+      if (!mounted) return;
+      final state = AppState();
+      if (state.districtId.isEmpty) {
+        context.go('/district-select');
+      } else {
+        context.go('/citizen');
+      }
     });
   }
 

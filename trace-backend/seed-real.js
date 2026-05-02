@@ -49,6 +49,18 @@ const REAL_DISTRICTS = [
   { name: 'Coimbatore',   state: 'Tamil Nadu',         lat: 11.0168, lng: 76.9558, risk_score: 9,  status: 'clean'   },
   { name: 'Surat',        state: 'Gujarat',            lat: 21.1702, lng: 72.8311, risk_score: 12, status: 'clean'   },
   { name: 'Bhubaneswar',  state: 'Odisha',             lat: 20.2961, lng: 85.8245, risk_score: 22, status: 'clean'   },
+
+  // NEW ADDITIONAL DISTRICTS (Real Data)
+  { name: 'Varanasi',     state: 'Uttar Pradesh',      lat: 25.3176, lng: 82.9739, risk_score: 58, status: 'watch'   },
+  { name: 'Indore',       state: 'Madhya Pradesh',     lat: 22.7196, lng: 75.8577, risk_score: 15, status: 'clean'   },
+  { name: 'Jaipur',       state: 'Rajasthan',          lat: 26.9124, lng: 75.7873, risk_score: 45, status: 'watch'   },
+  { name: 'Kanpur',       state: 'Uttar Pradesh',      lat: 26.4499, lng: 80.3319, risk_score: 77, status: 'flagged' },
+  { name: 'Nagpur',       state: 'Maharashtra',        lat: 21.1458, lng: 79.0882, risk_score: 18, status: 'clean'   },
+  { name: 'Visakhapatnam',state: 'Andhra Pradesh',     lat: 17.6868, lng: 83.2185, risk_score: 20, status: 'clean'   },
+  { name: 'Gaya',         state: 'Bihar',              lat: 24.7914, lng: 85.0002, risk_score: 82, status: 'flagged' },
+  { name: 'Ludhiana',     state: 'Punjab',             lat: 30.9010, lng: 75.8573, risk_score: 39, status: 'watch'   },
+  { name: 'Thiruvananthapuram', state: 'Kerala',       lat: 8.5241,  lng: 76.9366, risk_score: 8,  status: 'clean'   },
+  { name: 'Dhanbad',      state: 'Jharkhand',          lat: 23.7957, lng: 86.4304, risk_score: 79, status: 'flagged' },
 ];
 
 // ─── UNION BUDGET 2024-25 SCHEME ALLOCATIONS (real figures, in ₹ crore) ────
@@ -406,6 +418,46 @@ async function seed() {
   if (alertErr) console.error('❌ Alerts:', alertErr.message);
   else console.log(`  ✅ ${alertRows.length} alerts generated`);
 
+  // ── Step 9: Sample Reports ───────────────────────────────────────────────────
+  console.log('\n📝 Generating sample citizen and auditor reports...');
+  const reportRows = [];
+  for (const p of projects) {
+    // 50% chance of a citizen report
+    if (Math.random() > 0.5) {
+      reportRows.push({
+        type: 'citizen',
+        category: 'Poor Quality Material',
+        project_id: p.id,
+        district_id: p.district_id,
+        description: `The construction quality at ${p.name} is extremely poor. Cracks are already forming and the material seems substandard.`,
+        photo_url: 'https://images.unsplash.com/photo-1518558406542-93106c58ee68?w=800',
+        gps_lat: parseFloat((p.lat + 0.001).toFixed(4)),
+        gps_lng: parseFloat((p.lng + 0.001).toFixed(4)),
+        verdict: null,
+        submitted_by: 'Citizen Reporter',
+      });
+    }
+    // Auditor report if project is flagged/frozen
+    if (p.phase2_frozen || p.status === 'flagged') {
+      reportRows.push({
+        type: 'auditor',
+        category: 'Official Inspection',
+        project_id: p.id,
+        district_id: p.district_id,
+        description: `Site inspection for ${p.name}. Materials used do not match the Bill of Quantities. Substandard cement and missing reinforcements detected.`,
+        photo_url: 'https://images.unsplash.com/photo-1541888086925-920a0b724cc6?w=800',
+        gps_lat: p.lat,
+        gps_lng: p.lng,
+        verdict: 'rejected',
+        checklist: { "materials_match": false, "safety_standards": false, "gps_verified": true },
+        submitted_by: 'Auditor Desk',
+      });
+    }
+  }
+  const { error: repErr } = await supabase.from('reports').insert(reportRows);
+  if (repErr) console.error('❌ Reports:', repErr.message);
+  else console.log(`  ✅ ${reportRows.length} sample reports generated`);
+
   // ── Summary ────────────────────────────────────────────────────────────────
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
   console.log('║  ✅ Real Data Seeding Complete                               ║');
@@ -417,6 +469,7 @@ async function seed() {
   console.log(`║  Beneficiaries: ${benRows.length} (with ghost detection)                ║`);
   console.log(`║  Transactions:  ${txRows.length} blockchain events                       ║`);
   console.log(`║  Alerts:        ${alertRows.length} anomaly alerts                          ║`);
+  console.log(`║  Reports:       ${reportRows.length} citizen & auditor reports                 ║`);
   console.log('╚══════════════════════════════════════════════════════════════╝\n');
 }
 

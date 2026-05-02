@@ -5,8 +5,7 @@ class AppConfig {
 
   /// Local dev backend. Replace with your ngrok URL for device testing.
   /// Example: 'https://abc123.ngrok-free.app'
-  static const String baseUrl = 'http://10.0.2.2:3001';
-  // 10.0.2.2 is Android emulator's alias for localhost.
-  // For a real device on the same Wi-Fi, use your machine's LAN IP e.g. 192.168.1.x:3001
-  // For ngrok: 'https://xxxx.ngrok-free.app'
+  static const String baseUrl = 'http://127.0.0.1:3001';
+  // Note: 127.0.0.1 works on physical devices ONLY because we ran `adb reverse tcp:3001 tcp:3001`
+  // This tunnels the phone's port 3001 over USB directly to the PC's port 3001, bypassing Windows Firewall!
 }

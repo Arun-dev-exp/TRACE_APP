@@ -21,6 +21,7 @@ app.use('/api/districts',  require('./routes/districts'));
 app.use('/api/alerts',     require('./routes/alerts'));
 app.use('/api/contract',   require('./routes/contracts'));
 app.use('/api/schemes',    require('./routes/schemes'));
+app.use('/api/projects',   require('./routes/projects'));
 app.use('/api/risk-score', require('./routes/riskScore'));
 app.use('/api',            require('./routes/reports'));     // POST /api/report, /api/inspection
 app.use('/api/invoice',    require('./routes/invoices'));

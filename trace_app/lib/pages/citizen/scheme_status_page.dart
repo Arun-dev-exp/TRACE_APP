@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../app_state.dart';
 import '../../flutter_flow/flutter_flow_theme.dart';
 import '../../models/models.dart';
@@ -90,8 +91,18 @@ class _SchemeCard extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation(color)),
         ),
         const SizedBox(height: 6),
-        Text('${(pct * 100).toStringAsFixed(1)}% returned · Risk score ${s.riskScore}',
-            style: t.bodySmall),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${(pct * 100).toStringAsFixed(1)}% returned · Risk score ${s.riskScore}',
+                style: t.bodySmall),
+            TextButton.icon(
+              onPressed: () => context.push('/citizen/report?scheme=${Uri.encodeComponent(s.name)}'),
+              icon: Icon(Icons.report_problem_outlined, size: 16, color: t.error),
+              label: Text('Report', style: t.bodyMedium.copyWith(color: t.error, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
       ]),
     );
   }
